@@ -1,89 +1,78 @@
 <script>
-  // Título da tabela
-  export let titulo = "Tabela Verdade Xpto";
+  import Coluna from "./Coluna.svelte";
 
-  import CelulaCorpo from './CelulaCorpo.svelte'; // Ajuste o caminho se necessário
+  export let titulo = "Minha Tabela Verdade";
 
-  // Dados da tabela
-  const linhas = [
-    { p: true, q: true },
-    { p: true, q: false },
-    { p: false, q: true },
-    { p: false, q: false },
-  ];
+  // Definimos a quantidade de linhas globalmente
+  let totalLinhas = 4;
 
-  // Função para formatar booleano para string
-  const format = (val) => (val ? "V" : "F");
+  // Criamos os arrays de dados para cada coluna.
+  // Eles precisam ser 'let' para que o 'bind' funcione e a reatividade dispare.
+  let dadosP = ["V", "V", "F", "F"];
+  let dadosQ = ["V", "F", "V", "F"];
+  let dadosRes = ["", "", "", ""]; // Começa vazio para o usuário preencher
 
-  // Lógica da Conjunção (P ∧ Q)
-  const calcularResultado = (p, q) => p && q;
-
-  // Determinar se é Tautologia, Contradição ou Contingência
-  $: resultados = linhas.map(l => calcularResultado(l.p, l.q));
-  $: tipo = resultados.every(r => r === true) 
-           ? "Tautologia" 
-           : resultados.every(r => r === false) 
-           ? "Contradição" 
-           : "Contingência";
+  // Lógica reativa para o rodapé:
+  // Sempre que 'dadosRes' mudar (via clique na célula), 'tipo' será recalculado.
+  $: tipo =
+    dadosRes.includes("") || dadosRes.includes("?")
+      ? "Aguardando preenchimento..."
+      : dadosRes.every((v) => v === "V")
+        ? "Tautologia"
+        : dadosRes.every((v) => v === "F")
+          ? "Contradição"
+          : "Contingência";
 </script>
 
-<table>
-  <caption>{titulo}</caption>
-  <colgroup>
-    <col span="2">
-    <col class="resultado-col">
-  </colgroup>
-  <thead>
-    <tr>
-      <th scope="col">P</th>
-      <th scope="col">Q</th>
-      <th scope="col">P ∧ Q</th>
-    </tr>
-  </thead>
-  <tbody>
-    {#each linhas as { p, q }}
-      <tr>
-        <CelulaCorpo valor={p} />
-        <CelulaCorpo valor={q} />
-        <CelulaCorpo valor={p && q} />
-      </tr>
-    {/each}
-  </tbody>
-  <tfoot>
-    <tr>
-      <td colspan="3"><strong>Resultado:</strong> {tipo}</td>
-    </tr>
-  </tfoot>
-</table>
+<div class="tabela-container">
+  <h2>{titulo}</h2>
+
+  <span class="grade-colunas">
+    <Coluna titulo="P" {totalLinhas} bind:valores={dadosP} />
+
+    <Coluna titulo="Q" {totalLinhas} bind:valores={dadosQ} />
+
+    <Coluna titulo="P ∧ Q" {totalLinhas} bind:valores={dadosRes} destaque/>
+  </span>
+
+  <div class="status-bar">
+    <strong>Classificação:</strong>
+    {tipo}
+  </div>
+</div>
 
 <style>
-  table {
-    border-collapse: collapse;
-    font-family: "Roboto",sans-serif;
-    margin: 1rem 0;
+  :global(th td) {
+    width: 60px;
+    height: 50px;
+  }
+  .tabela-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 2rem;
+    font-family: "Roboto", sans-serif;
   }
 
-  th, td {
+  h2 {
+    margin-bottom: 1rem;
+    color: #333;
+  }
+
+  /* O segredo para parecer uma tabela única: */
+  .grade-colunas {
+    display: flex; /* Alinha as colunas lado a lado */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-right: 1px solid #bbb; /* Fecha a última borda que as colunas não têm */
+  }
+
+  .status-bar {
+    margin-top: 1rem;
+    padding: 10px 20px;
     border: 1px solid #bbb;
-    padding: 10px;
-    text-align: center;
-  }
-
-  th {
-    font-size: 1.3rem;
-  }
-
-  /* Estilizando a coluna via classe para manter o padrão que você usou */
-  .resultado-col {
-    background-color: #f0f0f0;
-  }
-
-  .resultado-celula {
-    background-color: #f0f0f0; /* Garante o visual se o colgroup falhar */
-  }
-
-  tfoot td {
     background-color: #fff;
-    font-size: 0.9rem;
+    border-radius: 4px;
+    min-width: 200px;
+    text-align: center;
   }
 </style>

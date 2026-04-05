@@ -1,20 +1,41 @@
 <script>
-  // Propriedade para definir se é uma coluna de resultado (cinza)
+  import CelulaCabecalho from './CelulaCabecalho.svelte';
+  import CelulaCorpo from './CelulaCorpo.svelte';
+
+  export let titulo = "";
   export let destaque = false;
+  export let totalLinhas = 4;
+  
+  // O segredo: inicializar o array caso o pai não passe nada
+  export let valores = Array(totalLinhas).fill("");
 </script>
 
-<col class:destaque />
+<div class="coluna-container" class:is-destaque={destaque}>
+  <table>
+    <thead>
+      <tr>
+        <CelulaCabecalho valor={titulo} />
+      </tr>
+    </thead>
+    <tbody>
+      {#each valores as _, i}
+        <tr>
+          <CelulaCorpo bind:valor={valores[i]} />
+        </tr>
+      {/each}
+    </tbody>
+  </table>
+</div>
 
 <style>
-  col {
-    /* Define uma largura mínima padrão para todas as colunas */
-    min-width: 60px;
+
+  table {
+    border-collapse: collapse;
+    border: #9c9c9c 1px solid;
   }
 
-  .destaque {
-    background-color: #f0f0f0;
-    /* Você poderia até colocar uma borda esquerda 
-       diferente para separar premissas de resultados */
-    border-left: 2px solid #ddd;
+  .is-destaque :global(td) {
+    background-color: #d9d9d9;
   }
+
 </style>

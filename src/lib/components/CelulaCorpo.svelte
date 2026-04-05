@@ -26,22 +26,29 @@
 
 <style>
   .celula {
-    border: 1px solid #bbb;
-    padding: 10px;
-    text-align: center;
-    font-weight: bold;
-    font-family: 'Roboto', sans-serif; /* Agora com Roboto! */
+
+    border-top: #9c9c9c 1px solid;
+    
+    /* Dimensões Fixas (Crucial para alinhar colunas separadas) */
+    width: var(--celula-width);
+    height: var(--celula-height);
+    
+    /* Centralização Total com Flexbox */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    /* 4. Tipografia e Estilo */
+    font-size: 1.2rem;
     cursor: pointer;
-    user-select: none; /* Evita que o texto fique azul ao clicar rápido */
-    min-width: 45px;   /* Garante que a célula não mude de largura */
-    height: 45px;
-    transition: all 0.2s ease;
+    user-select: none;
+    transition: all 0.6s ease;
+    
   }
 
-  /* Feedback visual ao passar o mouse */
   .celula:hover {
-    background-color: #f0f0f0;
-    border-color: #888;
+    background-color: #f8f8f8;
+    filter: brightness(0.95);
   }
 
   .verdade {
@@ -60,6 +67,6 @@
   }
 
   .vazio {
-    background-color: transparent;
+    background-color: #ffffff;
   }
 </style>

@@ -1,0 +1,16 @@
+/* src/lib/theme.css */
+:root {
+  /* Dimensões que travam o alinhamento das colunas */
+  --celula-width: 60px;
+  --celula-height: 50px;
+
+  /* Paleta de Cores */
+  --cor-borda: #bbb;
+  --cor-v-bg: #e8f5e9;
+  --cor-v-texto: #2e7d32;
+  --cor-f-bg: #ffebee;
+  --cor-f-texto: #d32f2f;
+  --cor-d-bg: #fff3e0;
+  --cor-d-texto: #ef6c00;
+  --cor-header-bg: #f8f9fa;
+}
