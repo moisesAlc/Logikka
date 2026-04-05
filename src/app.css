@@ -1,0 +1,11 @@
+/* No topo do seu arquivo src/app.css */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+:root {
+  font-family: 'Roboto', sans-serif;
+}
+
+body {
+  /* margin: 0; */
+  background-color: #f9f9f9; /* Um cinza bem leve para o fundo */
+}
