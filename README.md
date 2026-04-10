@@ -1,43 +1,92 @@
-# Svelte + Vite
 
-This template should help get you started developing with Svelte in Vite.
+---
 
-## Recommended IDE Setup
+# 🧠 Logikka - Tabela Verdade Interativa
 
-[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode).
+Um motor de Tabelas Verdade interativo construído com **Svelte** e **Vite**. O projeto permite a criação de tabelas dinâmicas onde o usuário pode alternar estados lógicos e receber feedback visual instantâneo.
 
-## Need an official Svelte framework?
+## 🚀 Tecnologias
+* [Svelte](https://svelte.dev/) - Framework reativo.
+* [Vite](https://vitejs.dev/) - Build tool ultra-rápido.
+* [CSS Variables](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties) - Sistema de temas centralizado.
 
-Check out [SvelteKit](https://github.com/sveltejs/kit#readme), which is also powered by Vite. Deploy anywhere with its serverless-first approach and adapt to various platforms, with out of the box support for TypeScript, SCSS, and Less, and easily-added support for mdsvex, GraphQL, PostCSS, Tailwind CSS, and more.
+## 🏗️ Arquitetura de Componentes
 
-## Technical considerations
+O projeto utiliza uma abordagem **orientada a colunas** para garantir a flexibilidade na montagem de diferentes expressões lógicas.
 
-**Why use this over SvelteKit?**
+* **`TabelaVerdade.svelte`**: O orquestrador principal. Gerencia os arrays de dados e a lógica de classificação (Tautologia, Contradição, Contingência).
+* **`Coluna.svelte`**: Gerencia uma vertical completa. Recebe um título e um array de valores, renderizando o cabeçalho e o corpo.
+* **`CelulaCabecalho.svelte`**: Componente visual para os títulos das colunas (P, Q, etc).
+* **`CelulaCorpo.svelte`**: Célula interativa que alterna entre os estados `V`, `F`, `?` e `""` ao ser clicada.
+* **`CorrecaoCelula.svelte`**: Pequeno componente de feedback que exibe `✔` ou `✘` baseado na validade da resposta.
 
-- It brings its own routing solution which might not be preferable for some users.
-- It is first and foremost a framework that just happens to use Vite under the hood, not a Vite app.
+## 🎨 Sistema de Temas
 
-This template contains as little as possible to get started with Vite + Svelte, while taking into account the developer experience with regards to HMR and intellisense. It demonstrates capabilities on par with the other `create-vite` templates and is a good starting point for beginners dipping their toes into a Vite + Svelte project.
+As propriedades visuais estão centralizadas no arquivo `src/lib/theme.css`. Para alterar o layout de todas as tabelas simultaneamente, basta editar as variáveis globais:
 
-Should you later need the extended capabilities and extensibility provided by SvelteKit, the template has been structured similarly to SvelteKit so that it is easy to migrate.
-
-**Why include `.vscode/extensions.json`?**
-
-Other templates indirectly recommend extensions via the README, but this file allows VS Code to prompt the user to install the recommended extension upon opening the project.
-
-**Why enable `checkJs` in the JS template?**
-
-It is likely that most cases of changing variable types in runtime are likely to be accidental, rather than deliberate. This provides advanced typechecking out of the box. Should you like to take advantage of the dynamically-typed nature of JavaScript, it is trivial to change the configuration.
-
-**Why is HMR not preserving my local component state?**
-
-HMR state preservation comes with a number of gotchas! It has been disabled by default in both `svelte-hmr` and `@sveltejs/vite-plugin-svelte` due to its often surprising behavior. You can read the details [here](https://github.com/sveltejs/svelte-hmr/tree/master/packages/svelte-hmr#preservation-of-local-state).
-
-If you have state that's important to retain within a component, consider creating an external store which would not be replaced by HMR.
-
-```js
-// store.js
-// An extremely simple external store
-import { writable } from 'svelte/store'
-export default writable(0)
+```css
+:root {
+  --celula-width: 60px;
+  --celula-height: 50px;
+  --cor-v-bg: #e8f5e9;
+  /* ... */
+}
 ```
+
+## 🛠️ Instalação e Uso
+
+1. **Clone o repositório:**
+   ```bash
+   git clone https://github.com/seu-usuario/logikka.git
+   ```
+
+2. **Instale as dependências:**
+   ```bash
+   npm install
+   ```
+
+3. **Inicie o servidor de desenvolvimento:**
+   ```bash
+   npm run dev
+   ```
+
+## 📝 Como Adicionar Novas Colunas
+
+No componente `TabelaVerdade.svelte`, basta declarar um novo array e adicionar o componente `Coluna`:
+
+```svelte
+<script>
+  let dadosP = ["V", "V", "F", "F"];
+  let dadosNovo = ["", "", "", ""];
+</script>
+
+<div class="grade-colunas">
+  <Coluna titulo="P" bind:valores={dadosP} />
+  <Coluna titulo="Nova Expressão" bind:valores={dadosNovo} destaque />
+</div>
+```
+
+---
+
+### 💡 Dica de manutenção
+Se precisar ajustar o alinhamento das colunas, lembre-se que o CSS centralizado no `TabelaVerdade.svelte` utiliza o seletor `:global(td)` para garantir que todos os componentes de coluna tenham dimensões idênticas.
+
+---
+
+## 🔮 Funcionalidades Futuras (Backlog)
+
+Atualmente, o projeto está em desenvolvimento ativo. As seguintes funcionalidades estão planeadas para as próximas versões:
+
+### ⚙️ Automação e Lógica
+- [ ] **Gerador Automático de Linhas**: Criar dinamicamente as $2^n$ combinações de premissas (V/F) baseadas no número de variáveis (P, Q, R, etc.).
+- [ ] **Validação por Expressão**: Comparar o preenchimento do utilizador com uma expressão lógica real (ex: `P && Q`) e ativar o componente `CorrecaoCelula` automaticamente.
+- [ ] **Importação de Fórmulas**: Permitir que o utilizador digite uma fórmula e a tabela seja montada sozinha.
+
+### 🎨 Interface e UX
+- [ ] **Modo Escuro (Dark Mode)**: Implementar uma variante do `theme.css` para ambientes de baixa luminosidade.
+- [ ] **Suporte a LaTeX**: Integrar o suporte para símbolos matemáticos complexos nos cabeçalhos através de slots e bibliotecas como KaTeX.
+- [ ] **Animações de Feedback**: Adicionar micro-interações quando uma linha é preenchida corretamente.
+
+### 📤 Exportação e Partilha
+- [ ] **Exportar para PDF/PNG**: Permitir que estudantes e professores descarreguem a tabela preenchida para trabalhos académicos.
+- [ ] **Persistência Local**: Salvar o progresso da tabela no `localStorage` do navegador para evitar perda de dados ao atualizar a página.

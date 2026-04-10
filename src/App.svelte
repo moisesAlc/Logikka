@@ -5,7 +5,6 @@
 </script>
 
 <main>
-  <img style="padding-top: 24px;" src="src/assets/favicon.svg"> <h1>Logikka </h1>
-  
+  <img style="padding-top: 24px;" src="src/assets/favicon.svg" alt="logo"> <h1>Logikka </h1>
   <TabelaVerdade titulo="Tabela do Exercício 1" />
 </main>
