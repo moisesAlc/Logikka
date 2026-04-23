@@ -1,5 +1,5 @@
 <script>
-  // O conteúdo do cabeçalho (ex: "P", "Q", "P ∧ Q")
+  // O conteúdo do cabeçalho (ex: "P", "Q", "P ∨ Q")
   export let valor = "";
 </script>
 

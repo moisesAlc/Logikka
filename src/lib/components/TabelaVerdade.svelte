@@ -10,7 +10,7 @@
   // Eles precisam ser 'let' para que o 'bind' funcione e a reatividade dispare.
   let dadosP = ["V", "V", "F", "F"];
   let dadosQ = ["V", "F", "V", "F"];
-  let dadosRes = ["", "", "", ""]; // Começa vazio para o usuário preencher
+  let dadosRes = ["V", "F", "F", "F"]; // Começa vazio para o usuário preencher
 
   // Lógica reativa para o rodapé:
   // Sempre que 'dadosRes' mudar (via clique na célula), 'tipo' será recalculado.
@@ -26,15 +26,15 @@
 
 <div class="tabela-container">
   <h2>{titulo}</h2>
-
+  <br><br>
   <span class="grade-colunas">
     <Coluna titulo="P" {totalLinhas} bind:valores={dadosP} />
 
     <Coluna titulo="Q" {totalLinhas} bind:valores={dadosQ} />
 
-    <Coluna titulo="P ∧ Q" {totalLinhas} bind:valores={dadosRes} destaque/>
+    <Coluna titulo="P ⊕ Q" {totalLinhas} bind:valores={dadosRes} destaque/>
   </span>
-
+  <br><br>
   <div class="status-bar">
     <strong>Classificação:</strong>
     {tipo}
