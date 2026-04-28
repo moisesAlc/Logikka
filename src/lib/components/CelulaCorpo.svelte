@@ -2,79 +2,73 @@
   import CorrecaoCelula from "./CorrecaoCelula.svelte";
 
   export let valor = "";
-  export let estadoCorrecao = "";
+  export let statusFeedback = ""; 
 
-  const estados = ["V", "F", "", "?"];
-  let girar = false; // Variável para controlar o estado da animação
+  const cicloValores = ["V", "F", "?"];
+  let animacaoGiro = false; 
 
-  function handleClick() {
-    // 1. Primeiro, iniciamos o giro visual
-    girar = !girar;
+  function alternarValor() {
 
-    // 2. Esperamos exatamente metade da animação (300ms de 600ms)
-    // para trocar o valor. Nesse ponto, o cartão está a 90°, invisível ao olho.
+    animacaoGiro = !animacaoGiro;
+
+    // 2. Troca o valor no "meio" do giro para suavidade visual
     setTimeout(() => {
-      const atualIdx = estados.indexOf(valor);
-      const proximoIdx = (atualIdx + 1) % estados.length;
-      valor = estados[proximoIdx];
-    }, 200);
+      const indiceAtual = cicloValores.indexOf(valor);
+      const proximoIndice = (indiceAtual + 1) % cicloValores.length;
+      valor = cicloValores[proximoIndice];
+    }, 250); // Ajustado para 250ms (pico do giro de 600ms)
   }
 </script>
 
-<td class="celula-container" on:click={handleClick}>
-  <div class="flip-card-inner" class:is-flipped={girar}>
-    <div
-      class="face front"
-      class:verdade={valor === "V"}
-      class:falso={valor === "F"}
-      class:duvida={valor === "?"}
-      class:vazio={valor === ""}
-    >
-      {valor}
-      <span class="correcao-pos"
-        ><CorrecaoCelula estado={estadoCorrecao} /></span
-      >
+<td class="celula-container" on:click={alternarValor}>
+  <div class="cartao-3d" class:is-flipped={animacaoGiro}>
+    
+    <div class="face front {obterClasseCor(valor)}">
+      <span class="conteudo-valor">{valor}</span>
+      <div class="feedback-container">
+        <CorrecaoCelula statusValidacao={statusFeedback} />
+      </div>
     </div>
 
-    <div
-      class="face back"
-      class:verdade={valor === "V"}
-      class:falso={valor === "F"}
-      class:duvida={valor === "?"}
-      class:vazio={valor === ""}
-    >
-      {valor}
-      <span class="correcao-pos"
-        ><CorrecaoCelula estado={estadoCorrecao} /></span
-      >
+    <div class="face back {obterClasseCor(valor)}">
+      <span class="conteudo-valor">{valor}</span>
+      <div class="feedback-container">
+        <CorrecaoCelula statusValidacao={statusFeedback} />
+      </div>
     </div>
+
   </div>
 </td>
 
+<script context="module">
+  // Função utilitária interna para não poluir o script principal
+  function obterClasseCor(v) {
+    if (v === "V") return "verdade";
+    if (v === "F") return "falso";
+    if (v === "?") return "duvida";
+    return "vazio";
+  }
+</script>
+
 <style>
   .celula-container {
-    /* Dimensões do seu tema */
-    width: var(--celula-width);
-    height: var(--celula-height);
+    width: var(--celula-width, 60px);
+    height: var(--celula-height, 50px);
     padding: 0;
     cursor: pointer;
-    user-select: none;
-    /* O "palco" para o 3D ocorrer */
     perspective: 1000px;
-    border-top: #9c9c9c 1px solid;
-    border-right: #9c9c9c 1px solid; /* Adicionei para fechar a grade */
+    border-top: 1px solid #9c9c9c;
+    border-right: 1px solid #9c9c9c;
   }
 
-  .flip-card-inner {
+  .cartao-3d {
     position: relative;
     width: 100%;
     height: 100%;
-    text-align: center;
     transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     transform-style: preserve-3d;
   }
 
-  /* Classe disparada pelo clique */
   .is-flipped {
     transform: rotateY(180deg);
   }
@@ -83,46 +77,33 @@
     position: absolute;
     width: 100%;
     height: 100%;
-    /* Esconde a face que estiver de costas */
     backface-visibility: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.2rem;
     font-weight: bold;
+    transition: background-color 0.3s ease;
   }
 
-  /* Posicionamento da face traseira */
   .back {
     transform: rotateY(180deg);
   }
 
-  /* Estilos de Cores (Reutilizando os seus) */
-  .verdade {
-    color: var(--cor-v-texto);
-    background-color: var(--cor-v-bg);
-  }
-  .falso {
-    color: var(--cor-f-texto);
-    background-color: var(--cor-f-bg);
-  }
-  .duvida {
-    color: var(--cor-d-texto);
-    background-color: var(--cor-d-bg);
-  }
-  .vazio {
-    background-color: var(--cor-vazio-bg);
-  }
+  /* Classes de Estado (Tema) */
+  .verdade { color: var(--cor-v-texto); background-color: var(--cor-v-bg); }
+  .falso { color: var(--cor-f-texto); background-color: var(--cor-f-bg); }
+  .duvida { color: var(--cor-d-texto); background-color: var(--cor-d-bg); }
+  .vazio { background-color: var(--cor-vazio-bg); }
 
-  /* Posicionamento do seu componente de correção */
-  .correcao-pos {
+  .feedback-container {
     position: absolute;
-    top: 2px;
+    top: 0;
     right: 2px;
-    font-size: 0.8rem;
+    pointer-events: none; /* Garante que o ícone não atrapalhe o clique na célula */
   }
 
   .celula-container:hover .face {
-    filter: brightness(0.95);
+    filter: contrast(1.1) brightness(0.98);
   }
 </style>

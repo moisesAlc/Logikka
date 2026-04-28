@@ -4,23 +4,22 @@
 
   export let titulo = "";
   export let destaque = false;
-  export let totalLinhas = 4;
-  
-  // O segredo: inicializar o array caso o pai não passe nada
-  export let valores = Array(totalLinhas).fill("");
+  export let valores = [];
+  export let feedbackValidacao = []; // Certifique-se de que esta prop existe aqui!
 </script>
 
 <div class="coluna-container" class:is-destaque={destaque}>
   <table>
     <thead>
-      <tr>
-        <CelulaCabecalho valor={titulo} />
-      </tr>
+      <tr><CelulaCabecalho valor={titulo} /></tr>
     </thead>
     <tbody>
       {#each valores as _, i}
         <tr>
-          <CelulaCorpo bind:valor={valores[i]} />
+          <CelulaCorpo 
+            bind:valor={valores[i]} 
+            statusFeedback={feedbackValidacao[i]} 
+          />
         </tr>
       {/each}
     </tbody>
@@ -28,14 +27,26 @@
 </div>
 
 <style>
-
   table {
     border-collapse: collapse;
-    border: #9c9c9c 1px solid;
+    /* Removemos a borda individual daqui para evitar duplicidade 
+       quando as colunas se encostam na grade principal */
+    border-left: 1px solid #9c9c9c;
   }
 
-  .is-destaque :global(td) {
-    background-color: #d9d9d9;
+  .coluna-container {
+    display: flex;
+    flex-direction: column;
   }
 
+  /* Estilo para a coluna de resultado */
+  .is-destaque :global(.face) {
+    background-color: var(--cor-destaque-bg, #f0f0f0);
+    border-left: 2px solid var(--cor-destaque-borda, #0db3be);
+  }
+
+  /* Caso queira desabilitar cliques em P e Q */
+  .is-readonly {
+    pointer-events: none;
+  }
 </style>

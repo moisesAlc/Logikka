@@ -1,84 +1,84 @@
 /**
- * Motor de Cálculo Lógico do Logikka
+ * Logikka Logic Engine - v0.6
+ * Motor de Cálculo e Geração de Tabelas Verdade
  */
 
-export const operadores = {
-  CONJUNCAO: (p, q) => p && q,        // ∧
-  DISJUNCAO: (p, q) => p || q,        // ∨
-  XOR: (p, q) => p !== q,             // ⊕
-  IMPLICACAO: (p, q) => !p || q,      // →
-  BICONDICIONAL: (p, q) => p === q,   // ↔
+export const conetoresLogicos = {
+  CONJUNCAO: (a, b) => a && b,        // ∧
+  DISJUNCAO: (a, b) => a || b,        // ∨
+  XOR: (a, b) => a !== b,             // ⊕
+  IMPLICACAO: (a, b) => !a || b,      // →
+  BICONDICIONAL: (a, b) => a === b,   // ↔
 };
 
 /**
- * Valida uma linha da tabela
- * @param {string} valorUsuario - "V", "F", "?" ou ""
- * @param {boolean} p 
- * @param {boolean} q 
- * @param {Function} operacao - Uma das funções do objeto operadores
+ * Avalia se a resposta do usuário para uma linha específica é logicamente válida.
+ * @param {string} resposta - "V", "F", "?" ou ""
+ * @param {string} premissaA - Valor da primeira coluna ("V" ou "F")
+ * @param {string} premissaB - Valor da segunda coluna ("V" ou "F")
+ * @param {Function} operacao - Função lógica de conetoresLogicos
  * @returns {string} 'correto', 'errado' ou ''
  */
-export function validarCalculoLogico(valorUsuario, p, q, operacao) {
-  if (valorUsuario === "" || valorUsuario === "?") return "";
+export function avaliarLinhaIndividual(resposta, premissaA, premissaB, operacao) {
+  if (resposta === "" || resposta === "?") return "";
   
-  const pBool = p === "V";
-  const qBool = q === "V";
+  // Conversão explícita de strings para booleanos para evitar erros de tipagem
+  const aBool = premissaA === "V";
+  const bBool = premissaB === "V";
   
-  const resultadoEsperado = operacao(pBool, qBool) ? "V" : "F";
+  const vereditoLogico = operacao(aBool, bBool) ? "V" : "F";
   
-  return valorUsuario === resultadoEsperado ? "correto" : "errado";
+  return resposta === vereditoLogico ? "correto" : "errado";
 }
 
 /**
- * Classifica a tabela (Tautologia, Contradição ou Contingência)
+ * Classifica o resultado final da coluna (Tautologia, Contradição ou Contingência)
+ * @param {string[]} colunaResultado - Array de respostas preenchidas
  */
-export function classificarTabela(dadosRes) {
-  if (dadosRes.includes("") || dadosRes.includes("?")) return "Aguardando preenchimento...";
+export function classificarTabela(colunaResultado) {
+  if (colunaResultado.includes("") || colunaResultado.includes("?")) {
+    return "Aguardando preenchimento...";
+  }
   
-  const todasV = dadosRes.every(v => v === "V");
-  const todasF = dadosRes.every(v => v === "F");
+  const todasVerdadeiras = colunaResultado.every(v => v === "V");
+  const todasFalsas = colunaResultado.every(v => v === "F");
   
-  if (todasV) return "Tautologia";
-  if (todasF) return "Contradição";
+  if (todasVerdadeiras) return "Tautologia";
+  if (todasFalsas) return "Contradição";
   return "Contingência";
 }
 
 /**
- * Gera os valores de uma coluna de referência baseada na posição e total de variáveis.
- * @param {number} index - O índice da variável (0 para P, 1 para Q, etc.)
- * @param {number} numVars - Total de variáveis (ex: 2 ou 3)
- * @returns {string[]} Array de "V" e "F"
+ * Gera a sequência de V/F para colunas de referência (P, Q, R...)
  */
-export function gerarValoresReferencia(index, numVars) {
-  const totalLinhas = Math.pow(2, numVars);
-  const blocoTamanho = Math.pow(2, numVars - index - 1);
-  const valores = [];
+export function gerarValoresReferencia(indiceVariavel, totalVariaveis) {
+  const totalLinhas = Math.pow(2, totalVariaveis);
+  // Calcula o tamanho do bloco (ex: em 4 linhas, P muda a cada 2, Q a cada 1)
+  const tamanhoBloco = Math.pow(2, totalVariaveis - indiceVariavel - 1);
+  const sequencia = [];
 
   for (let i = 0; i < totalLinhas; i++) {
-    // Alterna entre V e F baseado no tamanho do bloco para aquela variável
-    const isV = Math.floor(i / blocoTamanho) % 2 === 0;
-    valores.push(isV ? "V" : "F");
+    const ehVerdadeiro = Math.floor(i / tamanhoBloco) % 2 === 0;
+    sequencia.push(ehVerdadeiro ? "V" : "F");
   }
 
-  return valores;
+  return sequencia;
 }
 
 /**
- * Gera o conjunto completo de colunas de referência.
- * @param {number} numVars - Quantidade de variáveis
- * @returns {Object[]} Array de objetos formatados para o componente Coluna
+ * Cria o objeto de configuração para as colunas de premissas iniciais
  */
-export function gerarColunasIniciais(numVars) {
-  const nomes = ["P", "Q", "R", "S", "T"]; // Suporta até 5 variáveis
-  const colunas = [];
+export function gerarColunasIniciais(quantidadeVariaveis) {
+  const nomesPadrao = ["P", "Q", "R", "S", "T"];
+  const colunasGeradas = [];
 
-  for (let i = 0; i < numVars; i++) {
-    colunas.push({
-      id: nomes[i],
-      valores: gerarValoresReferencia(i, numVars),
+  for (let i = 0; i < quantidadeVariaveis; i++) {
+    colunasGeradas.push({
+      id: nomesPadrao[i],
+      valores: gerarValoresReferencia(i, quantidadeVariaveis),
       isReferencia: true
     });
   }
 
-  return colunas;
+  return colunasGeradas;
 }
